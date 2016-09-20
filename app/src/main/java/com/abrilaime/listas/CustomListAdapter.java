@@ -1,6 +1,7 @@
 package com.abrilaime.listas;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,59 +13,43 @@ import android.widget.TextView;
 import com.abrilaime.listas.models.Persona;
 
 import java.util.List;
+import java.util.zip.Inflater;
 
 /**
  * Created by aimew on 18/09/2016.
  */
-public class CustomListAdapter extends ArrayAdapter<Persona> {
+public class CustomListAdapter extends ArrayAdapter<Persona> implements ClickEvent{
 
-    private Persona personList[];
-    private Context context;
-    int layoutResourceItemId;
 
-    public CustomListAdapter(Context context, int layoutResourceItemId, Persona personList[]){
-        super(context, layoutResourceItemId, personList);
-
-        this.context = context;
-        this.layoutResourceItemId = layoutResourceItemId;
-        this.personList = personList;
+    public CustomListAdapter(Context context, int resource, List<Persona> objects) {
+        super(context, resource, objects);
     }
 
 
-    //clase interna
-    static class customListHolder {
-        TextView textNombre;
-        TextView textEdad;
-        TextView textCiudad;
-        ImageView image;
-    }
-
-
+    @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
-        customListHolder holder = null;
+        //obtener los datos del item en esta posicion
+        Persona persona = getItem(position);
 
-        if (view == null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.item_custom_list, parent, false);
+        //si no se ha creado nungun view
+        if (convertView == null){
 
-            holder = new customListHolder();
-            holder.textNombre = (TextView) view.findViewById(R.id.text_nombre);
-            holder.textEdad = (TextView) view.findViewById(R.id.text_age);
-            holder.textCiudad = (TextView) view.findViewById(R.id.text_city);
-            holder.image = (ImageView) view.findViewById(R.id.image_item);
-
-            view.setTag(holder);
-        }else{
-            holder = (customListHolder)view.getTag();
+            //crear el inflater
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_custom_list, parent, false);
         }
 
-        Persona persona = personList[position];
-        holder.textNombre.setText(persona.getNombre());
-        holder.textEdad.setText(persona.getEdad());
-        holder.textCiudad.setText(persona.getCiudad());
+        TextView textNombre = (TextView)convertView.findViewById(R.id.text_name);
+        TextView textEdad = (TextView)convertView.findViewById(R.id.text_age);
+        TextView textCiudad = (TextView)convertView.findViewById(R.id.text_city);
+        ImageView image = (ImageView)convertView.findViewById(R.id.image_item);
 
-        return view;
+        textNombre.setText(persona.getNombre());
+        textEdad.setText(persona.getEdad());
+        textCiudad.setText(persona.getCiudad());
+        image.setImageResource(android.R.drawable.ic_dialog_email);
+
+        return convertView;
     }
+
 }
